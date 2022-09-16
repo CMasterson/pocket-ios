@@ -118,6 +118,8 @@ extension RegularHomeCoordinator {
             show(recommendation)
         case .savedItem(let savedItem):
             show(savedItem)
+        case .sharedWithYou(let sharedWithYou):
+            show(sharedWithYou)
         case .none:
             break
         }
@@ -173,6 +175,32 @@ extension RegularHomeCoordinator {
 
         readable.$selectedRecommendationToReport.sink { [weak self] recommendation in
             self?.report(recommendation)
+        }.store(in: &readerSubscriptions)
+
+        let viewController = ReadableHostViewController(readableViewModel: readable)
+        navigationController.pushViewController(viewController, animated: !isResetting)
+    }
+
+    private func show(_ readable: SharedWithYouViewModel?) {
+        guard let readable = readable else {
+            return
+        }
+        readerSubscriptions = []
+
+        readable.$presentedWebReaderURL.sink { [weak self] url in
+            self?.push(url)
+        }.store(in: &readerSubscriptions)
+
+        readable.$isPresentingReaderSettings.sink { [weak self] isPresenting in
+            self?.present(readable.readerSettings, isPresenting: isPresenting)
+        }.store(in: &readerSubscriptions)
+
+        readable.$presentedAlert.sink { [weak self] alert in
+            self?.present(alert)
+        }.store(in: &readerSubscriptions)
+
+        readable.$sharedActivity.sink { [weak self] activity in
+            self?.share(activity)
         }.store(in: &readerSubscriptions)
 
         let viewController = ReadableHostViewController(readableViewModel: readable)

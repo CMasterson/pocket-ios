@@ -37,6 +37,7 @@
         <relationship name="recommendation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Recommendation" inverseName="item" inverseEntity="Recommendation"/>
         <relationship name="savedItem" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SavedItem" inverseName="item" inverseEntity="SavedItem"/>
         <relationship name="syndicatedArticle" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SyndicatedArticle" inverseName="item" inverseEntity="SyndicatedArticle"/>
+        <relationship name="sharedWithYouHighlight" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SharedWithYouHighlight" inverseName="item" inverseEntity="SharedWithYouHighlight"/>
     </entity>
     <entity name="PersistentSyncTask" representedClassName="PersistentSyncTask" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" optional="YES" attributeType="Date" defaultDateTimeInterval="666643260" usesScalarValueType="NO"/>
@@ -61,6 +62,11 @@
     </entity>
     <entity name="SavedItemUpdatedNotification" representedClassName="SavedItemUpdatedNotification" syncable="YES" codeGenerationType="class">
         <relationship name="savedItem" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SavedItem"/>
+    </entity>
+    <entity name="SharedWithYouHighlight" representedClassName="SharedWithYouHighlight" syncable="YES" codeGenerationType="class">
+        <attribute name="sortOrder" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="url" attributeType="URI"/>
+        <relationship name="item" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="sharedWithYouHighlight" inverseEntity="Item"/>
     </entity>
     <entity name="Slate" representedClassName="Slate" syncable="YES" codeGenerationType="class">
         <attribute name="experimentID" optional="YES" attributeType="String"/>

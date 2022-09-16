@@ -85,6 +85,7 @@ let package = Package(
                 "list.graphql",
                 "marticle.graphql",
                 "archive.graphql",
+                "sharedWithYou.graphql",
                 "schema.graphqls",
                 "introspection_response.json"
             ],

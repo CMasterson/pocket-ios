@@ -58,6 +58,13 @@ extension SavedItem {
         item = recommendation.item
     }
 
+    public func update(from sharedWithYouHighlight: SharedWithYouHighlight) {
+        self.url = sharedWithYouHighlight.item?.bestURL
+        self.createdAt = Date()
+
+        item = sharedWithYouHighlight.item
+    }
+
     public func update(from summary: SavedItemSummary, with space: Space) {
         remoteID = summary.remoteId
         url = URL(string: summary.url)

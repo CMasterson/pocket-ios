@@ -44,7 +44,7 @@ class HomeCarouselItemCell: UICollectionViewCell {
         return label
     }()
 
-    private let thumbnailView: UIImageView = {
+    internal let thumbnailView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = Constants.cornerRadius
         imageView.layer.masksToBounds = true
@@ -75,9 +75,9 @@ class HomeCarouselItemCell: UICollectionViewCell {
         return button
     }()
 
-    private let mainContentView = UIView()
+    internal let mainContentView = UIView()
 
-    private let mainContentStack: UIStackView = {
+    internal let mainContentStack: UIStackView = {
         let stack = UIStackView()
         stack.alignment = .top
         stack.distribution = .equalSpacing
@@ -86,14 +86,14 @@ class HomeCarouselItemCell: UICollectionViewCell {
         return stack
     }()
 
-    private let bottomStack: UIStackView = {
+    internal let bottomStack: UIStackView = {
         let stack = UIStackView()
         stack.distribution = .equalSpacing
         stack.axis = .horizontal
         return stack
     }()
 
-    private let subtitleStack: UIStackView = {
+    internal let subtitleStack: UIStackView = {
         let stack = UIStackView()
         stack.distribution = .fillProportionally
         stack.axis = .vertical
@@ -101,22 +101,18 @@ class HomeCarouselItemCell: UICollectionViewCell {
         return stack
     }()
 
-    private let buttonStack: UIStackView = {
+    internal let buttonStack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.spacing = 0
         return stack
     }()
 
-    private var thumbnailWidthConstraint: NSLayoutConstraint!
+    internal var thumbnailWidthConstraint: NSLayoutConstraint!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         accessibilityIdentifier = "home-carousel-item"
-
-        contentView.addSubview(mainContentStack)
-        contentView.addSubview(bottomStack)
-        contentView.layoutMargins = Constants.layoutMargins
 
         mainContentStack.translatesAutoresizingMaskIntoConstraints = false
         thumbnailView.translatesAutoresizingMaskIntoConstraints = false
@@ -128,6 +124,15 @@ class HomeCarouselItemCell: UICollectionViewCell {
         ).with(priority: .required)
 
         contentView.layoutMargins = Constants.layoutMargins
+
+        self.activateConstraints()
+    }
+
+    internal func activateConstraints() {
+        contentView.addSubview(mainContentStack)
+        contentView.addSubview(bottomStack)
+        contentView.layoutMargins = Constants.layoutMargins
+
         NSLayoutConstraint.activate([
             mainContentStack.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
             mainContentStack.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
@@ -191,6 +196,12 @@ extension HomeCarouselItemCell {
 
         let menuActions = model.overflowActions?.compactMap(UIAction.init) ?? []
         overflowButton.menu = UIMenu(children: menuActions)
+
+        if menuActions.isEmpty {
+            overflowButton.isHidden = true
+        } else {
+            overflowButton.isHidden = false
+        }
 
         thumbnailView.image = nil
         guard let thumbnailURL = model.thumbnailURL else {

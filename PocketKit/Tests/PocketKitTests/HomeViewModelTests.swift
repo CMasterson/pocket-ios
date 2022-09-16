@@ -539,7 +539,7 @@ class HomeViewModelTests: XCTestCase {
             switch readableType {
             case .recommendation:
                 readableExpectation.fulfill()
-            case .savedItem, .none:
+            case .savedItem, .sharedWithYou, .none:
                 XCTFail("Expected recommendation, but got \(String(describing: readableType))")
             }
         }.store(in: &subscriptions)
@@ -624,7 +624,7 @@ class HomeViewModelTests: XCTestCase {
             switch readableType {
             case .savedItem:
                 readableExpectation.fulfill()
-            case .recommendation, .none:
+            case .recommendation, .sharedWithYou, .none:
                 XCTFail("Expected recommendation, but got \(String(describing: readableType))")
             }
         }.store(in: &subscriptions)

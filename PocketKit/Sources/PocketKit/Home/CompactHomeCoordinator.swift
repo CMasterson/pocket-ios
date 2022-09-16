@@ -92,6 +92,8 @@ class CompactHomeCoordinator: NSObject {
             show(viewModel)
         case .recommendation(let viewModel):
             show(viewModel)
+        case .sharedWithYou(let viewModel):
+            show(viewModel)
         case .none:
             readerSubscriptions = []
         }
@@ -152,6 +154,35 @@ class CompactHomeCoordinator: NSObject {
         recommendation.$selectedRecommendationToReport.sink { [weak self] selected in
             self?.report(selected)
         }.store(in: &readerSubscriptions)
+    }
+
+    func show(_ sharedWithYou: SharedWithYouViewModel?) {
+        readerSubscriptions = []
+        guard let sharedWithYou = sharedWithYou else {
+            return
+        }
+
+        navigationController.pushViewController(
+            ReadableHostViewController(readableViewModel: sharedWithYou),
+            animated: !isResetting
+        )
+
+        sharedWithYou.$presentedAlert.sink { [weak self] alert in
+            self?.present(alert: alert)
+        }.store(in: &readerSubscriptions)
+
+        sharedWithYou.$sharedActivity.sink { [weak self] activity in
+            self?.present(activity: activity)
+        }.store(in: &readerSubscriptions)
+
+        sharedWithYou.$presentedWebReaderURL.sink { [weak self] url in
+            self?.present(url: url)
+        }.store(in: &readerSubscriptions)
+
+        sharedWithYou.$isPresentingReaderSettings.sink { [weak self] isPresenting in
+            self?.presentReaderSettings(isPresenting, on: sharedWithYou)
+        }.store(in: &readerSubscriptions)
+
     }
 
     func show(_ savedItem: SavedItemViewModel) {

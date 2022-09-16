@@ -30,6 +30,12 @@ struct Services {
 
     private let persistentContainer: PersistentContainer
 
+    private var _sharedWithYouManager: Any?
+    @available(iOS 16.0, *)
+    var sharedWithYouManager: SharedWithYouManager {
+        return _sharedWithYouManager as! SharedWithYouManager
+    }
+
     private init() {
         persistentContainer = .init(storage: .shared)
 
@@ -93,6 +99,13 @@ struct Services {
             braze: braze,
             instantSync: instantSync
         )
+
+        if #available(iOS 16.0, *), __sharedWithYouManager == nil {
+            // Hack to make sharedWithYou only accessible on iOS 16 by
+            // setting a private property on the struct
+            // https://stackoverflow.com/questions/41904724/using-available-with-stored-properties
+            _sharedWithYouManager = SharedWithYouManager(source: source, appSession: appSession)
+        }
     }
 }
 

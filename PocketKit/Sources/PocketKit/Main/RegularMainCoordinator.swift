@@ -160,6 +160,33 @@ extension RegularMainCoordinator {
         readerRoot.viewControllers = [readableVC]
         splitController.setViewController(readerRoot, for: .secondary)
     }
+
+    private func show(_ readable: SharedWithYouViewModel?) {
+        guard let readable = readable else {
+            return
+        }
+        readerSubscriptions = []
+
+        readable.$presentedWebReaderURL.sink { [weak self] url in
+            self?.present(url)
+        }.store(in: &readerSubscriptions)
+
+        readable.$isPresentingReaderSettings.sink { [weak self] isPresenting in
+            self?.present(readable.readerSettings, isPresenting: isPresenting)
+        }.store(in: &readerSubscriptions)
+
+        readable.$presentedAlert.sink { [weak self] alert in
+            self?.present(alert)
+        }.store(in: &readerSubscriptions)
+
+        readable.$sharedActivity.sink { [weak self] activity in
+            self?.share(activity)
+        }.store(in: &readerSubscriptions)
+
+        let readableVC = ReadableHostViewController(readableViewModel: readable)
+        readerRoot.viewControllers = [readableVC]
+        splitController.show(.secondary)
+    }
 }
 
 // MARK: - ModalContentPresenting

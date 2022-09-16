@@ -103,6 +103,17 @@ public class Space {
         return try fetchRecommendation(byRemoteID: id) ?? new()
     }
 
+    func fetchSharedWithYouHighlight(byUrl url: URL) throws -> SharedWithYouHighlight? {
+        let request = Requests.fetchSharedWithYouHighlight()
+        request.predicate = NSPredicate(format: "url = %@", url.absoluteString)
+        request.fetchLimit = 1
+        return try fetch(request).first
+    }
+
+    func fetchOrCreateSharedWithYouHighlight(byUrl url: URL) throws -> SharedWithYouHighlight {
+        return try fetchSharedWithYouHighlight(byUrl: url) ?? new()
+    }
+
     func fetchItems() throws -> [Item] {
         return try fetch(Requests.fetchItems())
     }
@@ -282,9 +293,28 @@ public class Space {
 
     func batchDeleteOrphanedItems() throws {
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Item.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "recommendation = NULL && savedItem = NULL")
+        fetchRequest.predicate = NSPredicate(format: "recommendation = NULL && savedItem = NULL && sharedWithYouHighlight = NULL")
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
 
         try context.execute(deleteRequest)
+    }
+
+    /**
+    Remove shared highlights that are no longer given to us by iOS
+     */
+    func batchDeleteSharedWithYouHighlightsNotInArray(sharedWithYouHighlights: [PocketSWHighlight]) throws {
+        let urls = sharedWithYouHighlights.map { $0.url }
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = SharedWithYouHighlight.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "NOT (url IN %@)", urls)
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        deleteRequest.resultType = .resultTypeObjectIDs
+
+        let deleteResult = try context.execute(deleteRequest) as? NSBatchDeleteResult
+        if let deletedItemIDs = deleteResult?.result as? [NSManagedObjectID] {
+            NSManagedObjectContext.mergeChanges(
+                fromRemoteContextSave: [NSDeletedObjectsKey: deletedItemIDs],
+                into: [context]
+            )
+        }
     }
 }
