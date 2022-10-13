@@ -22,7 +22,8 @@ let package = Package(
         .package(url: "https://github.com/airbnb/lottie-ios.git", from: "3.5.0"),
         .package(url: "https://github.com/johnxnguyen/Down", .upToNextMinor(from: "0.11.0")),
         .package(url: "https://github.com/SvenTiigi/YouTubePlayerKit.git", .upToNextMinor(from: "1.1.5")),
-        .package(url: "https://github.com/braze-inc/braze-swift-sdk.git", .upToNextMajor(from: "5.6.4"))
+        .package(url: "https://github.com/braze-inc/braze-swift-sdk.git", .upToNextMajor(from: "5.6.4")),
+        .package(url: "https://github.com/RNCryptor/RNCryptor.git", .upToNextMajor(from: "5.0.0"))
     ],
     targets: [
         .target(
@@ -54,7 +55,10 @@ let package = Package(
         ),
 
         .target(
-            name: "SharedPocketKit"
+            name: "SharedPocketKit",
+            dependencies: [
+                "RNCryptor"
+            ]
         ),
         .testTarget(
             name: "SharedPocketKitTests",
