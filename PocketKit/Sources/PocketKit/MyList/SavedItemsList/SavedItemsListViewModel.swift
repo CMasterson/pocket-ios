@@ -117,6 +117,8 @@ class SavedItemsListViewModel: NSObject, ItemsListViewModel {
                 return nil
             case .sortAndFilter:
                 return nil
+            case .search:
+                return nil
             }
         }
         applySorting()
@@ -467,6 +469,8 @@ extension SavedItemsListViewModel {
                 listOptions: listOptions,
                 sender: sender
             )
+        case .search:
+            _events.send(.searchSelected)
         default:
             if selectedFilters.contains(filter) {
                 selectedFilters.remove(filter)

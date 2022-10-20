@@ -192,6 +192,14 @@ class ItemsListViewController<ViewModel: ItemsListViewModel>: UIViewController, 
         }.store(in: &subscriptions)
 
         collectionView.prefetchDataSource = self
+
+        navigationItem.searchController = UISearchController(searchResultsController: nil)
+        navigationItem.searchController?.searchBar.scopeButtonTitles = ["All", "Saves", "Archive"]
+        navigationItem.searchController?.searchBar.showsScopeBar = true
+        let button = UIBarButtonItem(systemItem: .search, primaryAction: UIAction { _ in
+            self.navigationItem.searchController?.isActive = true
+        })
+        navigationItem.rightBarButtonItem = button
     }
 
     required init?(coder: NSCoder) {
@@ -280,6 +288,8 @@ class ItemsListViewController<ViewModel: ItemsListViewModel>: UIViewController, 
         switch event {
         case .selectionCleared:
             deselectAll()
+        case .searchSelected:
+            navigationItem.searchController?.isActive = true
         }
     }
 

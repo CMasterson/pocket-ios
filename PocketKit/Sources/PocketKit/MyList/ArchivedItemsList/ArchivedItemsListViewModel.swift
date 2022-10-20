@@ -415,6 +415,8 @@ extension ArchivedItemsListViewModel {
                     return .favorites
                 case .sortAndFilter:
                     return nil
+                case .search:
+                    return nil
                 }
             }
 
@@ -459,7 +461,8 @@ extension ArchivedItemsListViewModel {
                 sender: sender,
                 listOfSortMenuOptions: [.newest, .oldest]
             )
-
+        case .search:
+            _events.send(.searchSelected)
         default:
             if selectedFilters.contains(filter) {
                 selectedFilters.remove(filter)
