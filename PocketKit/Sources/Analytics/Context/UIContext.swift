@@ -136,12 +136,6 @@ extension UIContext {
         public let myList = UIContext(type: .list, hierarchy: 0, identifier: .myList)
         public let archive = UIContext(type: .list, hierarchy: 0, identifier: .archive)
         public let favorites = UIContext(type: .list, hierarchy: 0, identifier: .favorites)
-        public let taggedChip = UIContext(type: .button, hierarchy: 0, identifier: .taggedChip)
-        public let notTagged = UIContext(type: .button, hierarchy: 0, identifier: .notTagged)
-        public let tagBadge = UIContext(type: .button, hierarchy: 0, identifier: .tagBadge)
-        public let tagsOverflow = UIContext(type: .button, hierarchy: 0, identifier: .tagsOverflow)
-        public let tagsDelete = UIContext(type: .button, hierarchy: 0, identifier: .tagsDelete)
-        public let tagsSaveChanges = UIContext(type: .button, hierarchy: 0, identifier: .tagsSaveChanges)
 
         public func item(index: UIIndex) -> UIContext {
             UIContext(type: .card, hierarchy: 0, identifier: .item, componentDetail: .itemRow, index: index)

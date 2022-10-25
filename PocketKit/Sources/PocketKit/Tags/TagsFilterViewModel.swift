@@ -61,7 +61,7 @@ class TagsFilterViewModel: ObservableObject {
     func selectTag(_ tag: SelectedTag) {
         var tagContext = UIContext.button(identifier: .selectedTag)
         if case .notTagged = tag {
-            tagContext = UIContext.myList.notTagged
+            tagContext = UIContext.button(identifier: .notTagged)
         }
         sendSelectedTagAnalytics(context: tagContext)
     }
