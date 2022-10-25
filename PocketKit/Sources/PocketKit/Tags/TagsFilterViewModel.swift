@@ -4,7 +4,7 @@ import Analytics
 import Foundation
 
 class TagsFilterViewModel: ObservableObject {
-    enum SelectedTag : Equatable {
+    enum SelectedTag {
         case notTagged
         case tag(String)
 
@@ -21,7 +21,6 @@ class TagsFilterViewModel: ObservableObject {
     private var fetchedTags: [Tag]?
     private let tracker: Tracker
     private let source: Source
-    private let tracker: Tracker
     var selectAllAction: () -> Void?
 
     @Published
@@ -50,28 +49,32 @@ class TagsFilterViewModel: ObservableObject {
             allTags.append(contentsOf: fetchedTags)
         }
 
-        let event = SnowplowEngagement(type: .general, value: nil)
-        let contexts: [Context] = [UIContext.home.screen, UIContext.myList.taggedChip]
-        tracker.track(event: event, contexts)
-
         return allTags
     }
 
-    func selectTag(tag: SelectedTag) {
-        let tagContext = tag == .notTagged ? UIContext.myList.notTagged : UIContext.myList.taggedChip
+    func trackEditAsOverflowAnalytics() {
+        let event = SnowplowEngagement(type: .general, value: nil)
+        let context = UIContext.button(identifier: .tagsOverflow)
+        tracker.track(event: event, [context])
+    }
+
+    func selectTag(_ tag: SelectedTag) {
+        var tagContext = UIContext.button(identifier: .selectedTag)
+        if case .notTagged = tag {
+            tagContext = UIContext.myList.notTagged
+        }
         sendSelectedTagAnalytics(context: tagContext)
     }
 
     private func sendSelectedTagAnalytics(context: Context) {
         let event = SnowplowEngagement(type: .general, value: nil)
-        let contexts: [Context] = [UIContext.home.screen, context]
-        tracker.track(event: event, contexts)
+        tracker.track(event: event, [context])
     }
 
     func delete(tags: [String]) {
         let event = SnowplowEngagement(type: .general, value: nil)
-        let contexts: [Context] = [UIContext.myList.tagsDelete]
-        tracker.track(event: event, contexts)
+        let contexts: Context = UIContext.button(identifier: .tagsDelete)
+        tracker.track(event: event, [contexts])
         tags.forEach { tag in
             guard let tag: Tag = fetchedTags?.filter({ $0.name == tag }).first else { return }
             source.deleteTag(tag: tag)
@@ -80,8 +83,8 @@ class TagsFilterViewModel: ObservableObject {
 
     func rename(from oldName: String, to newName: String) {
         let event = SnowplowEngagement(type: .general, value: nil)
-        let contexts: [Context] = [UIContext.myList.tagsSaveChanges]
-        tracker.track(event: event, contexts)
+        let contexts: Context = UIContext.button(identifier: .tagsSaveChanges)
+        tracker.track(event: event, [contexts])
         guard let tag: Tag = fetchedTags?.filter({ $0.name == oldName }).first else { return }
         source.renameTag(from: tag, to: newName)
         refreshView = true

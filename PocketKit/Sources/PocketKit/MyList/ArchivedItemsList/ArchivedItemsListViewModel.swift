@@ -393,10 +393,7 @@ extension ArchivedItemsListViewModel {
                 case .all:
                     return nil
                 case .tagged:
-                    let event = SnowplowEngagement(type: .general, value: nil)
-                    let contexts: [Context] = [UIContext.myList.screen, UIContext.myList.taggedChip]
-                    tracker.track(event: event, contexts)
-                    filterTagOverflowAnalytics()
+                    filterTagAnalytics()
                     presentedTagsFilter = TagsFilterViewModel(
                         source: source,
                         tracker: tracker,
@@ -430,10 +427,10 @@ extension ArchivedItemsListViewModel {
         }
     }
 
-    private func filterTagOverflowAnalytics() {
+    private func filterTagAnalytics() {
         let event = SnowplowEngagement(type: .general, value: nil)
-        let contexts: [Context] = [UIContext.myList.tagsOverflow]
-        tracker.track(event: event, contexts)
+        let contexts: Context = UIContext.button(identifier: .taggedChip)
+        tracker.track(event: event, [contexts])
     }
 
     private func updateSnapshotForTagFilter(with name: String, and predicate: NSPredicate) {

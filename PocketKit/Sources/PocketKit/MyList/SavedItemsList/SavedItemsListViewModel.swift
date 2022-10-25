@@ -91,12 +91,9 @@ class SavedItemsListViewModel: NSObject, ItemsListViewModel {
             case .favorites:
                 return NSPredicate(format: "isFavorite = true")
             case .tagged:
-                let event = SnowplowEngagement(type: .general, value: nil)
-                let contexts: [Context] = [UIContext.myList.screen, UIContext.myList.taggedChip]
-                tracker.track(event: event, contexts)
                 presentedTagsFilter = TagsFilterViewModel(
                     source: source,
-                    tracker: tracker.childTracker(hosting: .myList.screen),
+                    tracker: tracker,
                     fetchedTags: { [weak self] in
                         self?.source.fetchAllTags()
                     }(),
@@ -196,8 +193,8 @@ class SavedItemsListViewModel: NSObject, ItemsListViewModel {
 
     func filterByTagAction() -> UIAction? {
         let event = SnowplowEngagement(type: .general, value: nil)
-        let contexts: [Context] = [UIContext.myList.screen, UIContext.myList.tagBadge]
-        tracker.track(event: event, contexts)
+        let contexts: Context = UIContext.button(identifier: .tagBadge)
+        tracker.track(event: event, [contexts])
         return UIAction(title: "", handler: { [weak self] action in
             let button = action.sender as? UIButton
             guard let name = button?.titleLabel?.text else { return }
@@ -475,7 +472,7 @@ extension SavedItemsListViewModel {
                 sender: sender
             )
         case .tagged:
-            filterTagOverflowAnalytics()
+            filterTagAnalytics()
             selectedFilters.removeAll()
             selectedFilters.insert(filter)
         default:
@@ -489,10 +486,10 @@ extension SavedItemsListViewModel {
         }
     }
 
-    private func filterTagOverflowAnalytics() {
+    private func filterTagAnalytics() {
         let event = SnowplowEngagement(type: .general, value: nil)
-        let contexts: [Context] = [UIContext.myList.tagsOverflow]
-        tracker.track(event: event, contexts)
+        let contexts: Context = UIContext.button(identifier: .taggedChip)
+        tracker.track(event: event, [contexts])
     }
 }
 

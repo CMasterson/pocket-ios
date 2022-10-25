@@ -86,6 +86,7 @@ extension UIContext {
         case logIn = "log_in"
         case signUp = "sign_up"
         case taggedChip = "taggedChip"
+        case selectedTag = "selectedTagChip"
         case notTagged = "notTagged"
         case tagBadge = "tagBadge"
         case tagsOverflow = "tagsOverflow"
