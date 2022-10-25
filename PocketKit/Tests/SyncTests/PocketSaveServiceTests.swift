@@ -1,5 +1,6 @@
 import XCTest
 import Apollo
+import PocketGraph
 import Sync
 
 @testable import Sync
@@ -382,7 +383,7 @@ extension PocketSaveServiceTests {
         XCTAssertEqual(unresolved[0].hasChanges, false)
     }
 
-    func test_retrieveTags_updatesInfoViewModel() async {
+    func test_retrieveTags_updatesInfoViewModel() {
         let tag: Tag = space.new()
         tag.name = "tag 1"
         let tag2: Tag = space.new()
