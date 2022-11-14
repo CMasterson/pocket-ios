@@ -4,11 +4,13 @@ import CoreData
 import Combine
 import Kingfisher
 
-class ItemsListViewController<ViewModel: ItemsListViewModel>: UIViewController, UICollectionViewDelegate, UICollectionViewDataSourcePrefetching {
+class ItemsListViewController<ViewModel: ItemsListViewModel>: UIViewController, UICollectionViewDelegate, UICollectionViewDataSourcePrefetching, UISearchBarDelegate {
+
     private let model: ViewModel
     private var subscriptions: [AnyCancellable] = []
     private var collectionView: UICollectionView!
     private var dataSource: UICollectionViewDiffableDataSource<ItemsListSection, ItemsListCell<ViewModel.ItemIdentifier>>!
+    private let searchController = UISearchController()
 
     init(model: ViewModel) {
         self.model = model
@@ -206,6 +208,7 @@ class ItemsListViewController<ViewModel: ItemsListViewModel>: UIViewController, 
         super.viewDidLoad()
         view.backgroundColor = UIColor(.ui.white1)
         model.fetch()
+        setupSearch()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -282,6 +285,8 @@ class ItemsListViewController<ViewModel: ItemsListViewModel>: UIViewController, 
         switch event {
         case .selectionCleared:
             deselectAll()
+        case .searchSelected:
+            navigationItem.searchController?.isActive = true
         }
     }
 
@@ -289,6 +294,25 @@ class ItemsListViewController<ViewModel: ItemsListViewModel>: UIViewController, 
         collectionView.indexPathsForSelectedItems?.forEach { selectedIndexPath in
             collectionView.deselectItem(at: selectedIndexPath, animated: false)
         }
+    }
+
+    private func setupSearch() {
+//        navigationItem.searchController = UISearchController(searchResultsController: nil)
+//        navigationItem.searchController?.searchBar.scopeButtonTitles = ["All", "Saves", "Archive"]
+//        navigationItem.searchController?.searchBar.showsScopeBar = true
+//        navigationItem.searchController?.searchBar.sizeToFit()
+
+//        navigationItem.searchController = UISearchController(searchResultsController: nil)
+        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.searchController?.searchBar.sizeToFit()
+        searchController.searchBar.delegate = self
+        navigationItem.searchController = searchController
+    }
+
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        let vc = SearchViewController()
+        vc.modalPresentationStyle = .fullScreen
+        self.show(vc, sender: self)
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

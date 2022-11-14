@@ -96,6 +96,8 @@ class SavedItemsListViewModel: NSObject, ItemsListViewModel {
     func fetch() {
         let filters = selectedFilters.compactMap { filter -> NSPredicate? in
             switch filter {
+            case.search:
+                return nil
             case .favorites:
                 return NSPredicate(format: "isFavorite = true")
             case .tagged:
@@ -489,6 +491,8 @@ extension SavedItemsListViewModel {
         guard !reTappedTagFilter else { return }
 
         switch filter {
+        case .search:
+            _events.send(.searchSelected)
         case .all:
             selectedFilters.removeAll()
             selectedFilters.insert(.all)

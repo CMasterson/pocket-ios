@@ -87,5 +87,7 @@ class SavesContainerViewController: UIViewController {
         ])
 
         child.didBecomeSelected(by: self)
+
+        navigationItem.searchController = child.navigationItem.searchController
     }
 }

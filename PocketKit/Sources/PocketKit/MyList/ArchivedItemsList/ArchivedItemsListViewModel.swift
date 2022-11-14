@@ -406,6 +406,8 @@ extension ArchivedItemsListViewModel {
         if filter != .sortAndFilter {
             archiveService.filters = selectedFilters.compactMap { filter in
                 switch filter {
+                case .search:
+                    return nil
                 case .all:
                     return nil
                 case .tagged:
@@ -474,6 +476,8 @@ extension ArchivedItemsListViewModel {
         guard !reTappedTagFilter else { return }
 
         switch filter {
+        case .search:
+            _events.send(.searchSelected)
         case .all:
             selectedFilters.removeAll()
             selectedFilters.insert(.all)
