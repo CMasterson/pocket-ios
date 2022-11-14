@@ -297,22 +297,14 @@ class ItemsListViewController<ViewModel: ItemsListViewModel>: UIViewController, 
     }
 
     private func setupSearch() {
-//        navigationItem.searchController = UISearchController(searchResultsController: nil)
-//        navigationItem.searchController?.searchBar.scopeButtonTitles = ["All", "Saves", "Archive"]
-//        navigationItem.searchController?.searchBar.showsScopeBar = true
-//        navigationItem.searchController?.searchBar.sizeToFit()
-
-//        navigationItem.searchController = UISearchController(searchResultsController: nil)
-        navigationItem.hidesSearchBarWhenScrolling = false
-        navigationItem.searchController?.searchBar.sizeToFit()
-        searchController.searchBar.delegate = self
-        navigationItem.searchController = searchController
-    }
-
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        let vc = SearchViewController()
-        vc.modalPresentationStyle = .fullScreen
-        self.show(vc, sender: self)
+        navigationItem.searchController = UISearchController(searchResultsController: SearchViewController())
+        navigationItem.searchController?.searchBar.scopeButtonTitles = ["All", "Saves", "Archive"]
+        if #available(iOS 16.0, *) {
+            navigationItem.searchController?.scopeBarActivation = .onSearchActivation
+        } else {
+            navigationItem.searchController?.automaticallyShowsScopeBar = true
+        }
+        navigationItem.searchController?.showsSearchResultsController = true
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
