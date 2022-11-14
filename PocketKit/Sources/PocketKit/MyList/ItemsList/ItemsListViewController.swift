@@ -297,8 +297,13 @@ class ItemsListViewController<ViewModel: ItemsListViewModel>: UIViewController, 
     }
 
     private func setupSearch() {
-        navigationItem.searchController = UISearchController(searchResultsController: SearchViewController())
-        navigationItem.searchController?.searchBar.scopeButtonTitles = ["All", "Saves", "Archive"]
+        let viewModel = SearchViewModel()
+        let vc = SearchResultsController(model: viewModel)
+        navigationItem.searchController = UISearchController(searchResultsController: vc)
+        navigationItem.searchController?.showsSearchResultsController = true
+
+        navigationItem.searchController?.searchBar.delegate = vc
+        navigationItem.searchController?.searchBar.scopeButtonTitles = viewModel.scopeTitles
         if #available(iOS 16.0, *) {
             navigationItem.searchController?.scopeBarActivation = .onSearchActivation
         } else {
