@@ -24,6 +24,7 @@ public class PocketSource: Source {
     private let apollo: ApolloClientProtocol
     private let lastRefresh: LastRefresh
     private let slateService: SlateService
+    private let featureFlagService: FeatureFlagLoadingService
     private let networkMonitor: NetworkPathMonitor
     private let retrySignal: PassthroughSubject<Void, Never>
     private let sessionProvider: SessionProvider
@@ -58,6 +59,7 @@ public class PocketSource: Source {
             operations: OperationFactory(),
             lastRefresh: UserDefaultsLastRefresh(defaults: defaults),
             slateService: APISlateService(apollo: apollo, space: space),
+            featureFlagService: APIFeatureFlagService(apollo: apollo, space: space, user: user, sessionProvider: sessionProvider),
             networkMonitor: NWPathMonitor(),
             sessionProvider: sessionProvider,
             backgroundTaskManager: backgroundTaskManager,
@@ -74,6 +76,7 @@ public class PocketSource: Source {
         operations: SyncOperationFactory,
         lastRefresh: LastRefresh,
         slateService: SlateService,
+        featureFlagService: FeatureFlagLoadingService,
         networkMonitor: NetworkPathMonitor,
         sessionProvider: SessionProvider,
         backgroundTaskManager: BackgroundTaskManager,
@@ -85,6 +88,7 @@ public class PocketSource: Source {
         self.operations = operations
         self.lastRefresh = lastRefresh
         self.slateService = slateService
+        self.featureFlagService = featureFlagService
         self.networkMonitor = networkMonitor
         self.retrySignal = .init()
         self.sessionProvider = sessionProvider
@@ -399,6 +403,19 @@ extension PocketSource {
             mutation = AnyMutation(ReplaceSavedItemTagsMutation(input: [SavedItemTagsInput(savedItemId: remoteID, tags: tags)]))
         }
         return mutation
+    }
+}
+
+// MARK: - Feature Flags
+
+extension PocketSource {
+
+    public func fetchAllFeatureFlags() async throws {
+        try await featureFlagService.fetchFeatureFlags()
+    }
+
+    public func fetchFeatureFlag(byName name: String) -> FeatureFlag? {
+        try? space.fetchFeatureFlag(byName: name)
     }
 }
 

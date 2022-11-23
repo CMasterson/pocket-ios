@@ -12,6 +12,7 @@ public class FetchSavesQuery: GraphQLQuery {
         userByToken(token: $token) {
           __typename
           isPremium
+          id
           savedItems(pagination: $pagination, filter: $savedItemsFilter) {
             __typename
             totalCount
@@ -77,6 +78,7 @@ public class FetchSavesQuery: GraphQLQuery {
       public static var __parentType: ParentType { PocketGraph.Objects.User }
       public static var __selections: [Selection] { [
         .field("isPremium", Bool?.self),
+        .field("id", ID.self),
         .field("savedItems", SavedItems?.self, arguments: [
           "pagination": .variable("pagination"),
           "filter": .variable("savedItemsFilter")
@@ -85,6 +87,8 @@ public class FetchSavesQuery: GraphQLQuery {
 
       /// The user's premium status
       public var isPremium: Bool? { __data["isPremium"] }
+      /// User id, provided by the user service.
+      public var id: ID { __data["id"] }
       /// Get a general paginated listing of all SavedItems for the user
       public var savedItems: SavedItems? { __data["savedItems"] }
 

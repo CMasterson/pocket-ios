@@ -287,4 +287,20 @@ public class Space {
 
         try context.execute(deleteRequest)
     }
+
+    func fetchFeatureFlag(byName name: String) throws -> FeatureFlag? {
+        let request = Requests.fetchFeatureFlags()
+        request.predicate = NSPredicate(format: "name = %@", name)
+        request.fetchLimit = 1
+        return try fetch(request).first
+    }
+
+    func fetchOrCreateFeatureFlag(byName name: String) throws -> FeatureFlag {
+        return try fetchFeatureFlag(byName: name) ?? new()
+    }
+
+    func fetchFeatureFlags() throws -> [FeatureFlag] {
+        return try fetch(Requests.fetchFeatureFlags())
+    }
+
 }

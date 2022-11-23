@@ -30,6 +30,7 @@ struct Services {
     let instantSync: InstantSyncProtocol
     let braze: BrazeProtocol
     let appBadgeSetup: AppBadgeSetup
+    let featureFlagService: FeatureFlagService
 
     private let persistentContainer: PersistentContainer
 
@@ -111,6 +112,8 @@ struct Services {
             userDefaults: userDefaults,
             badgeProvider: UIApplication.shared
         )
+
+        featureFlagService = FeatureFlagService(source: source, tracker: tracker)
     }
 }
 

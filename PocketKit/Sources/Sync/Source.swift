@@ -50,6 +50,10 @@ public protocol Source {
 
     func fetchAllTags() -> [Tag]?
 
+    func fetchAllFeatureFlags() async throws
+
+    func fetchFeatureFlag(byName name: String) -> FeatureFlag?
+
     func fetchTags(isArchived: Bool) -> [Tag]?
 
     func fetchSlateLineup(_ identifier: String) async throws

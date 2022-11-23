@@ -69,6 +69,10 @@ class FetchList: SyncOperation {
                 user.setPremiumStatus(isPremium)
              }
 
+            if let userId = result.data?.userByToken?.id {
+                user.setId(userId)
+             }
+
             if case .started = initialDownloadState.value,
                let totalCount = result.data?.userByToken?.savedItems?.totalCount,
                pagination.cursor == nil {
