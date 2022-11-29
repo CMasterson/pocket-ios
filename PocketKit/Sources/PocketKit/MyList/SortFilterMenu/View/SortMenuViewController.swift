@@ -61,7 +61,7 @@ extension SortMenuViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView: SortMenuHeaderView = tableView.dequeueReusableHeaderFooterView()
-        headerView.setHeader(title: SortSection.allCases[section].rawValue)
+        headerView.setHeader(title: SortSection.allCases[section].rawValue.localized())
         return headerView
     }
 

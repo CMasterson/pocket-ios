@@ -93,7 +93,7 @@ class NavigationSidebarViewController: UIViewController {
         self.model = model
         super.init(nibName: nil, bundle: nil)
 
-        self.title = "Pocket"
+        self.title = "Pocket".localized()
 
         collectionView.contentInset = UIEdgeInsets(top: 21, left: 0, bottom: 0, right: 0)
         collectionView.isScrollEnabled = false

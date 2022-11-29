@@ -80,14 +80,14 @@ extension ReadableViewModel {
 
     func confirmDelete() {
         presentedAlert = PocketAlert(
-            title: "Are you sure you want to delete this item?",
+            title: "Are you sure you want to delete this item?".localized(),
             message: nil,
             preferredStyle: .alert,
             actions: [
-                UIAlertAction(title: "No", style: .default) { [weak self] _ in
+                UIAlertAction(title: "No".localized(), style: .default) { [weak self] _ in
                     self?.presentedAlert = nil
                 },
-                UIAlertAction(title: "Yes", style: .destructive) { [weak self] _ in self?._delete() },
+                UIAlertAction(title: "Yes".localized(), style: .destructive) { [weak self] _ in self?._delete() },
             ],
             preferredAction: nil
         )
@@ -115,7 +115,7 @@ extension ReadableViewModel {
 
     func webViewActivityItems(for item: SavedItem) -> [UIActivity] {
         let archiveActivityTitle: WebActivityTitle = (item.isArchived
-                                                       ? .moveToSaves
+                                                      ? .moveToSaves
                                                        : .archive)
         let archiveActivity = ReaderActionsWebActivity(title: archiveActivityTitle) { [weak self] in
             if item.isArchived == true {
