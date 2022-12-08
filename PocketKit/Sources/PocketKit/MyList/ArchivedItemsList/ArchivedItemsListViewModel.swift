@@ -259,6 +259,15 @@ extension ArchivedItemsListViewModel {
             self?.trackButton(item: item, identifier: .itemOverflow)
         })
     }
+    
+    func swiftUITrackOverflow(for itemID: ItemIdentifier) -> ItemAction? {
+        guard let item = savedItem(itemID) else {
+            return nil
+        }
+        return ItemAction(title: "", identifier: UIAction.Identifier(rawValue: ""), accessibilityIdentifier: "", image: nil) { [weak self] _ in
+            self?.trackButton(item: item, identifier: .itemOverflow)
+        }
+    }
 
     func trailingSwipeActions(for objectID: ItemIdentifier) -> [ItemContextualAction] {
         guard let item = savedItem(objectID) else {

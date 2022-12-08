@@ -214,6 +214,7 @@ extension ItemsListItemCell {
         case plain
     }
     struct Model: Hashable {
+        
         let attributedTitle: NSAttributedString
         let attributedDetail: NSAttributedString
         let attributedTags: [NSAttributedString]?
@@ -226,6 +227,7 @@ extension ItemsListItemCell {
         let overflowActions: [ItemAction]
         let filterByTagAction: UIAction?
         let trackOverflow: UIAction?
+        let swiftUITrackOverflow: ItemAction?
     }
 
     override func updateConfiguration(using state: UICellConfigurationState) {
