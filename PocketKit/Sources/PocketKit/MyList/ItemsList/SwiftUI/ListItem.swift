@@ -9,8 +9,6 @@ import SwiftUI
 import Textile
 import Kingfisher
 
-
-
 struct ListItem: View {
     
     var model: ItemsListItemCell.Model
@@ -43,6 +41,6 @@ struct ListItem: View {
                 
             }
         }
-        .padding(.vertical, Constants.verticalPadding)
+        .padding(.vertical, constants.verticalPadding)
     }
 }
