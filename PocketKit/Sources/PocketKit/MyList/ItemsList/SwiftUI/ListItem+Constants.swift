@@ -8,8 +8,6 @@
 import SwiftUI
 
 extension ListItem {
-//    static let constants = Constants()
-//    typealias listItemConstants = ListItem.Constants
     enum Constants {
 
         static let verticalPadding: CGFloat = 15
