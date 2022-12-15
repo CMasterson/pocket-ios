@@ -26,20 +26,23 @@ public class LegacyUserMigration {
     private let userDefaults: UserDefaults
     private let encryptedStore: LegacyEncryptedStore
     private let appSession: AppSession
+    private let keychain: Keychain
 
     public init(
         userDefaults: UserDefaults,
         encryptedStore: LegacyEncryptedStore,
-        appSession: AppSession
+        appSession: AppSession,
+        keychain: Keychain = SecItemKeychain()
     ) {
         self.userDefaults = userDefaults
         self.encryptedStore = encryptedStore
         self.appSession = appSession
+        self.keychain = keychain
     }
 
     @discardableResult
     public func perform() throws -> Bool {
-        guard let password = userDefaults.string(forKey: Self.decryptionKey) else {
+        guard let password = currentPassword else {
             throw LegacyUserMigrationError.missingKey
         }
 
@@ -116,6 +119,20 @@ extension LegacyUserMigration {
             userDefaults.set(true, forKey: Self.migrationKey)
         }
     }
+
+    private var currentPassword: String? {
+        // The legacy app first checks its keychain for a password for decryption,
+        // followed by a user defaults fallback
+        return keychainPassword ?? userDefaultsPassword ?? nil
+    }
+
+    private var keychainPassword: String? {
+        LegacyPasswordRetriever(keychain: keychain).password
+    }
+
+    private var userDefaultsPassword: String? {
+        userDefaults.string(forKey: Self.decryptionKey)
+    }
 }
 
 private struct LegacyStore: Decodable {
@@ -129,5 +146,30 @@ private struct LegacyStore: Decodable {
         case accessToken
         case userIdentifier = "uid"
         case version
+    }
+}
+
+private class LegacyPasswordRetriever {
+    let password: String?
+
+    init(keychain: Keychain) {
+        let query: CFDictionary = [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrService: "Pocket",
+            kSecAttrAccount: "encryption",
+            kSecAttrAccessGroup: "group.com.ideashower.ReadItLaterProAlphaNeue",
+            kSecReturnData: true
+        ] as CFDictionary
+
+        var result: AnyObject?
+        let status = keychain.copyMatching(query: query, result: &result)
+
+        guard status == errSecSuccess,
+              let password = result as? String else {
+            password = nil
+            return
+        }
+
+        self.password = password
     }
 }
