@@ -17,7 +17,13 @@ class SearchViewModel: ObservableObject {
     }
 
     private var isPremium: Bool {
-        return user.status == .premium
+        user.status == .premium
+    }
+
+    var _isPremiumAndOffline: Bool = false
+    var isPremiumAndOffline: Bool {
+        get { return _isPremiumAndOffline }
+        set { self._isPremiumAndOffline = newValue }
     }
 
     private var selectedScope: SearchScope = .saves
@@ -72,6 +78,7 @@ class SearchViewModel: ObservableObject {
         self.source = source
         networkPathMonitor.start(queue: .global())
         self.searchService = source.makeSearchService()
+        isPremiumAndOffline = isPremium && isOffline
     }
 
     func updateScope(with scope: SearchScope, searchTerm: String? = nil) {
