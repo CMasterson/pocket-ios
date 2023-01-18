@@ -137,7 +137,7 @@ public class PocketSource: Source {
     }
 
     public func makeSearchService() -> SearchService {
-        PocketSearchService(apollo: apollo)
+        PocketSearchService(apollo: apollo, space: space)
     }
 
     public func makeUndownloadedImagesController() -> ImagesController {
@@ -651,5 +651,9 @@ extension PocketSource {
 extension PocketSource {
     public func searchSaves(search: String) -> [SavedItem]? {
         try? space.fetchSavedItems(bySearchTerm: search, userPremium: user.status == .premium)
+    }
+
+    public func fetchSavedItem(remoteID: String) -> SavedItem? {
+        try? space.fetchSavedItem(byRemoteID: remoteID)
     }
 }

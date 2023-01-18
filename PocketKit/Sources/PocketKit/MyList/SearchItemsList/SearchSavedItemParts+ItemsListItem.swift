@@ -19,8 +19,8 @@ extension SearchSavedItemParts: ItemsListItem {
     }
 
     var topImageURL: URL? {
-        guard let topImage = item.asItem?.topImage else { return nil }
-        return URL(string: topImage.url)
+        guard let topImageURL = item.asItem?.topImageUrl else { return nil }
+        return URL(string: topImageURL)
     }
 
     var domain: String? {

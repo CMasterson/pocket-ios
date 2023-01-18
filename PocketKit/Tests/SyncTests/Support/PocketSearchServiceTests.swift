@@ -8,21 +8,25 @@ import SharedPocketKit
 
 class PocketSearchServiceTests: XCTestCase {
     var apollo: MockApolloClient!
+    var space: Space!
     var cancellables: [AnyCancellable] = []
 
     override func setUpWithError() throws {
         apollo = MockApolloClient()
+        space = .testSpace()
     }
 
     override func tearDownWithError() throws {
         cancellables = []
+        try space.clear()
     }
 
     func subject(
         apollo: ApolloClientProtocol? = nil
     ) -> PocketSearchService {
         PocketSearchService(
-            apollo: apollo ?? self.apollo
+            apollo: apollo ?? self.apollo,
+            space: space ?? self.space
         )
     }
 

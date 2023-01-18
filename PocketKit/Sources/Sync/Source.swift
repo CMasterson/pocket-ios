@@ -80,6 +80,8 @@ public protocol Source {
 
     func fetchItem(_ url: URL) -> Item?
 
+    func fetchSavedItem(remoteID: String) -> SavedItem?
+
     func searchSaves(search: String) -> [SavedItem]?
 }
 

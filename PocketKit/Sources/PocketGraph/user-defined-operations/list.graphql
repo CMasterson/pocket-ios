@@ -148,6 +148,7 @@ query SearchSavedItems($term: String!, $pagination: PaginationInput, $filter: Se
 
 fragment SearchSavedItemParts on SavedItem {
     url
+    remoteID: id
     isArchived
     isFavorite
     _deletedAt
@@ -157,7 +158,7 @@ fragment SearchSavedItemParts on SavedItem {
         ...TagParts
     }
     item {
-        ...SearchItemParts
+        ...ItemParts
         ...PendingItemParts
     }
 }

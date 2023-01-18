@@ -17,14 +17,18 @@ public class PocketSearchService: SearchService {
         }
     }
 
+    typealias SearchItemEdge = SearchSavedItemsQuery.Data.User.SearchSavedItems.Edge
+
     @Published
     private var _results: [SearchSavedItemParts] = []
     public var results: Published<[SearchSavedItemParts]>.Publisher { $_results }
 
     private let apollo: ApolloClientProtocol
+    private let space: Space
 
-    init(apollo: ApolloClientProtocol) {
+    init(apollo: ApolloClientProtocol, space: Space) {
         self.apollo = apollo
+        self.space = space
     }
 
     public func search(for term: String, scope: SearchScope) async {
@@ -46,7 +50,8 @@ public class PocketSearchService: SearchService {
             let filter = getSearchFilter(with: scope)
             let query = SearchSavedItemsQuery(term: term, pagination: .init(pagination), filter: .some(filter))
             let result = try await apollo.fetch(query: query)
-            result.data?.user?.searchSavedItems?.edges.forEach { edge in
+            try result.data?.user?.searchSavedItems?.edges.forEach { edge in
+                try updateLocalStorage(with: edge)
                 items.append(edge.node.savedItem.fragments.searchSavedItemParts)
             }
             if let pageInfo = result.data?.user?.searchSavedItems?.pageInfo {
@@ -58,6 +63,11 @@ public class PocketSearchService: SearchService {
 
             _results = items
         }
+    }
+
+    private func updateLocalStorage(with edge: SearchItemEdge) throws {
+        let item = try space.fetchOrCreateSavedItem(byRemoteID: edge.node.savedItem.remoteID)
+        item.update(from: edge, with: space)
     }
 
     private func getSearchFilter(with scope: SearchScope) -> SearchFilterInput {

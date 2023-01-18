@@ -3,8 +3,11 @@ import Network
 import Sync
 import Combine
 import SharedPocketKit
+import Analytics
+import CoreData
 
 class SearchViewModel: ObservableObject {
+    typealias ItemIdentifier = NSManagedObjectID
     static let recentSearchesKey = "Search.recentSearches"
     private var subscriptions: [AnyCancellable] = []
     private let networkPathMonitor: NetworkPathMonitor
@@ -12,7 +15,8 @@ class SearchViewModel: ObservableObject {
     private let userDefaults: UserDefaults
     private let source: Source
     private let searchService: SearchService
-    private var isOffline: Bool {
+    private let tracker: Tracker
+    var isOffline: Bool {
         networkPathMonitor.currentNetworkPath.status == .unsatisfied
     }
 
@@ -31,6 +35,9 @@ class SearchViewModel: ObservableObject {
 
     @Published
     var emptyState: EmptyStateViewModel?
+
+    @Published
+    var selectedItem: SelectedItem?
 
     @Published
     var searchResults: [SearchItem]? {
@@ -65,11 +72,12 @@ class SearchViewModel: ObservableObject {
         }
     }
 
-    init(networkPathMonitor: NetworkPathMonitor, user: User, userDefaults: UserDefaults, source: Source) {
+    init(networkPathMonitor: NetworkPathMonitor, user: User, userDefaults: UserDefaults, source: Source, tracker: Tracker) {
         self.networkPathMonitor = networkPathMonitor
         self.user = user
         self.userDefaults = userDefaults
         self.source = source
+        self.tracker = tracker
         networkPathMonitor.start(queue: .global())
         self.searchService = source.makeSearchService()
     }
@@ -184,5 +192,42 @@ class SearchViewModel: ObservableObject {
             return nil
         }
         return RecentSearchEmptyState()
+    }
+}
+
+extension SearchViewModel {
+    func select(_ remoteID: String?) {
+
+        guard let remoteID = remoteID, let savedItem = source.fetchSavedItem(remoteID: remoteID) else { return }
+
+        let readable = SavedItemViewModel(
+            item: savedItem,
+            source: source,
+            tracker: tracker.childTracker(hosting: .articleView.screen),
+            pasteboard: UIPasteboard.general
+        )
+
+        if savedItem.shouldOpenInWebView {
+            selectedItem = .webView(readable)
+
+            trackContentOpen(destination: .external, item: savedItem)
+        } else {
+            selectedItem = .readable(readable)
+
+            trackContentOpen(destination: .internal, item: savedItem)
+        }
+    }
+
+    private func trackContentOpen(destination: ContentOpenEvent.Destination, item: SavedItem) {
+        guard let url = item.bestURL else {
+            return
+        }
+
+        let contexts: [Context] = [
+            ContentContext(url: url)
+        ]
+
+        let event = ContentOpenEvent(destination: destination, trigger: .click)
+        tracker.track(event: event, contexts)
     }
 }
