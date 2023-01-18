@@ -61,6 +61,63 @@ extension Item {
         }
     }
 
+    func update(remote: SearchItemParts) {
+        remoteID = remote.remoteID
+        givenURL = URL(string: remote.givenUrl)
+        resolvedURL = remote.resolvedUrl.flatMap(URL.init)
+        title = remote.title
+//        topImageURL = remote.topImage?.url.flatMap(URL.init)
+        domain = remote.domain
+//        language = remote.language
+        timeToRead = remote.timeToRead.flatMap(Int32.init) ?? 0
+//       excerpt = remote.excerpt
+        datePublished = remote.datePublished.flatMap { DateFormatter.clientAPI.date(from: $0) }
+        isArticle = remote.isArticle ?? false
+        imageness = remote.hasImage?.rawValue
+        videoness = remote.hasVideo?.rawValue
+
+        guard let context = managedObjectContext else {
+            return
+        }
+
+        if let metaParts = remote.domainMetadata?.fragments.domainMetadataParts {
+            domainMetadata = domainMetadata ?? DomainMetadata(context: context)
+            domainMetadata?.update(remote: metaParts)
+        }
+
+//        article = remote.marticle.flatMap { remoteComponents -> Article? in
+//            let components = remoteComponents.map(ArticleComponent.init)
+//            return Article(components: components)
+//        }
+
+//        if let authors = authors {
+//            removeFromAuthors(authors)
+//        }
+//        remote.authors?.forEach { remoteAuthor in
+//            guard let remoteAuthor = remoteAuthor else {
+//                return
+//            }
+//
+//            addToAuthors(Author(remote: remoteAuthor, context: context))
+//        }
+//
+//        if let images = images {
+//            removeFromImages(images)
+//        }
+//        remote.images?.forEach { remoteImage in
+//            guard let remoteImage = remoteImage else {
+//                return
+//            }
+//
+//            addToImages(Image(remote: remoteImage, context: context))
+//        }
+//
+//        if let syndicatedArticle = remote.syndicatedArticle {
+//            self.syndicatedArticle = SyndicatedArticle(context: context)
+//            self.syndicatedArticle?.itemID = syndicatedArticle.itemId
+//        }
+    }
+
     func update(from summary: ItemSummary) {
         remoteID = summary.remoteID
         givenURL = URL(string: summary.givenUrl)

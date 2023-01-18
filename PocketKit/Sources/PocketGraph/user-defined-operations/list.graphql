@@ -158,7 +158,7 @@ fragment SearchSavedItemParts on SavedItem {
         ...TagParts
     }
     item {
-        ...ItemParts
+        ...SearchItemParts
         ...PendingItemParts
     }
 }

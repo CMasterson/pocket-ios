@@ -70,7 +70,7 @@ extension SavedItem {
         isFavorite = remote.isFavorite
 
         guard let context = managedObjectContext,
-              let itemParts = remote.item.asItem?.fragments.itemParts else {
+              let itemParts = remote.item.asItem?.fragments.searchItemParts else {
             return
         }
 
@@ -83,7 +83,6 @@ extension SavedItem {
             fetchedTag.update(remote: remoteTag.fragments.tagParts)
             return fetchedTag
         } ?? [])
-    
         let fetchRequest = Requests.fetchItem(byRemoteID: itemParts.remoteID)
         fetchRequest.fetchLimit = 1
         let itemToUpdate = try? context.fetch(fetchRequest).first ?? Item(context: context)

@@ -197,7 +197,6 @@ class SearchViewModel: ObservableObject {
 
 extension SearchViewModel {
     func select(_ remoteID: String?) {
-
         guard let remoteID = remoteID, let savedItem = source.fetchSavedItem(remoteID: remoteID) else { return }
 
         let readable = SavedItemViewModel(

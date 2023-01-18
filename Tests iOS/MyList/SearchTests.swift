@@ -223,4 +223,15 @@ class SearchTests: XCTestCase {
         XCTAssertEqual(searchView.cells.count, 2)
         XCTAssertFalse(app.saves.itemView(at: 0).element.isHittable)
     }
+
+    // MARK: - Select a Search Item
+        func test_selectSearchItem_showsReaderView() {
+            app.launch()
+            tapSearch()
+            let searchField = app.navigationBar.searchFields["Search"].wait()
+            searchField.tap()
+            searchField.typeText("item\n")
+            var searchView = app.saves.searchView.searchResultsView.wait()
+            app.saves.searchView.searchResultsView.cells.element(boundBy: 0).tap()
+        }
 }
