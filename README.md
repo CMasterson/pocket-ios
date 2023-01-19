@@ -84,7 +84,7 @@ Shared Pocket Kit contains the main bits for session management and keychain sto
 
 ### Commit strategy
 
-We prefer to keep out commit history linear (meaning avoiding noisy merge
+We prefer to keep our commit history linear (meaning avoiding noisy merge
 commits). To keep your branch up to date, follow these steps:
 
 ```bash
